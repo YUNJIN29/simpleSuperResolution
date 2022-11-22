@@ -21,6 +21,8 @@ class ImgDataset(VisionDataset):
         HR_files = glob.glob(self.hr_dir + '/**', recursive=True)
         self.imgs = []
         for file in HR_files:
+            if os.path.isdir(file):
+                continue
             filename = os.path.basename(file).rsplit('.', maxsplit=1)
             self.imgs.append((os.path.join(self.lr_dir, prefix + filename[0] + subfix + '.' + filename[-1]), file))
         self.length = len(self.imgs)
