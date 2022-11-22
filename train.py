@@ -113,7 +113,7 @@ for i in range(epoch):
                     image = image.to(device)
                     expect = expect.to(device)
                     con = torch.cat([image, final])
-                    writer.add_images("test-img", con)
+                    writer.add_images("test-img", con, test_times)
             writer.add_scalar("test_loss", total_loss / test_dataset_len, test_times)
             test_times = test_times + 1
 
