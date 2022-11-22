@@ -1,7 +1,5 @@
 from PIL import Image
 from torchvision.datasets.vision import *
-from torchvision.datasets import ImageFolder
-from torchvision.transforms.functional import to_tensor
 from torchvision.transforms import ToTensor
 import glob
 import os

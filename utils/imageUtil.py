@@ -33,7 +33,7 @@ class ImageSplitter:
         for i in range(self.pad_size, height, self.seg_size):
             for j in range(self.pad_size, width, self.seg_size):
                 part = img_tensor[:, :, (i - self.pad_size):min(i + self.pad_size + self.seg_size, height),
-                       (j - self.pad_size):min(j + self.pad_size + self.seg_size, width)]
+                                        (j - self.pad_size):min(j + self.pad_size + self.seg_size, width)]
                 if img_pad > 0:
                     part = nn.ZeroPad2d(img_pad)(part)
                 patchs.append(part)

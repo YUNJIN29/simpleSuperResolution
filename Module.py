@@ -1,4 +1,3 @@
-from apex.fp16_utils import tofp16, BN_convert_float
 from torch import nn
 
 
