@@ -1,4 +1,3 @@
-import torch
 from torch import optim
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
@@ -28,6 +27,8 @@ train_times = opts.train_times
 test_times = opts.test_times
 test_cycle = opts.test_cycle
 save_cycle = opts.save_cycle
+pic_no = 0
+test_offset = train_times - test_times * test_cycle
 
 # dataset
 train_dataset = ImgDataset(train_dataset_dir, HR_dir=opts.target_folder, LR_dir=opts.input_folder,
@@ -77,6 +78,53 @@ def clac(img, target):
     return loss_fn(output, target), output
 
 
+def train(img, target, train_times):
+    model.train()
+    loss, final = clac(img, target)
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+    writer.add_scalar("train_loss", loss.item(), train_times)
+    print('完成第{}次训练，loss: {}'.format(train_times, loss.item()))
+    return train_times + 1
+
+
+def patchTrain(img, target, train_times, pic_no):
+    model.train()
+    img_parts = img_splitter.split_img_tensor(img)
+    target_part = img_splitter.split_img_tensor(target)
+    print('第{}张数据，共{}个切片'.format(pic_no, len(img_parts)))
+    for i in range(len(img_parts)):
+        print(img_parts[i].size())
+        loss, out = clac(img_parts[i], target_part[i])
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        train_times = train_times + 1
+        writer.add_scalar("train_loss", loss.item(), train_times)
+        print('完成第{}次训练，loss: {}'.format(train_times, loss.item()))
+    return train_times, pic_no + 1
+
+
+def test(test_times):
+    model.eval()
+    with torch.no_grad():
+        total_loss = 0
+        flag = True
+        for image, expect in test_dataloader:
+            loss, final = clac(image, expect)
+            total_loss = total_loss + loss
+            if flag:
+                flag = False
+                image = image.to(device)
+                con = torch.cat([image, final])
+                writer.add_images("test-img", con, test_times)
+    writer.add_scalar("test_loss", total_loss, test_times)
+    writer.add_scalar("total_test_loss", total_loss / test_dataset_len, test_times)
+    print("\n完成第{}次测试，total loss: {}\n".format(test_times, total_loss))
+    return test_times + 1
+
+
 def saveModel():
     if not os.path.isdir(save_dir):
         os.mkdir(save_dir)
@@ -88,38 +136,18 @@ def saveModel():
 
 for i in range(epoch):
     print("----第{}轮学习开始----".format(i))
-    model.train()
     for img, target in train_dataloader:
-        loss, final = clac(img, target)
-        print('完成第{}次训练，loss: {}'.format(train_times, loss.item()))
-        # optimize
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        writer.add_scalar("train_loss", loss.item(), train_times)
-        train_times = train_times + 1
+        if opts.patchs > 0:
+            train_times, pic_no = patchTrain(img, target, train_times, pic_no)
+        else:
+            train_times = train(img, target, train_times)
 
         # test
         if train_times % test_cycle == 0:
-            with torch.no_grad():
-                total_loss = 0
-                flag = True
-                for image, expect in test_dataloader:
-                    loss, final = clac(image, expect)
-                    total_loss = total_loss + loss
-                    if flag:
-                        flag = False
-                        image = image.to(device)
-                        expect = expect.to(device)
-                        con = torch.cat([image, final])
-                        writer.add_images("test-img", con, test_times)
-                writer.add_scalar("test_loss", total_loss, test_times)
-                writer.add_scalar("total_test_loss", total_loss / test_dataset_len, test_times)
-                print("\n完成第{}次测试，total loss: {}\n".format(test_times, total_loss))
-                test_times = test_times + 1
+            test_times = test(test_times)
 
         # save state
-        if train_times % save_cycle == 0:
+        if train_times // save_cycle > test_times:
             saveModel()
     print("----第{}轮学习结束----".format(i))
 if train_times % save_cycle != 0:
