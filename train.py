@@ -81,6 +81,8 @@ def clac(img, target):
 
 
 def saveModel():
+    if not os.path.isdir(save_dir):
+        os.mkdir(save_dir)
     filename = "checkpoint-{}X-{}".format(scale_factor, train_times)
     torch.save(model.state_dict(),
                os.path.join(save_dir, filename))
