@@ -108,6 +108,8 @@ for i in range(epoch):
                 total_loss = total_loss + loss
                 if flag:
                     flag = False
+                    image = image.to(device)
+                    expect = expect.to(device)
                     con = torch.cat([image, final])
                     writer.add_images("test-img", con)
             writer.add_scalar("test_loss", total_loss / test_dataset_len, test_times)
