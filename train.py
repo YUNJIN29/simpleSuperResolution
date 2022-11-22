@@ -95,7 +95,6 @@ def patchTrain(img, target, train_times, pic_no):
     target_part = img_splitter.split_img_tensor(target)
     print('第{}张数据，共{}个切片'.format(pic_no, len(img_parts)))
     for i in range(len(img_parts)):
-        print(img_parts[i].size())
         loss, out = clac(img_parts[i], target_part[i])
         optimizer.zero_grad()
         loss.backward()
@@ -134,22 +133,33 @@ def saveModel():
     print("已保存{}".format(filename))
 
 
-for i in range(epoch):
-    print("----第{}轮学习开始----".format(i))
-    for img, target in train_dataloader:
-        if opts.patchs > 0:
-            train_times, pic_no = patchTrain(img, target, train_times, pic_no)
-        else:
+if opts.patchs == 0:
+    for i in range(epoch):
+        print("----第{}轮学习开始----".format(i))
+        for img, target in train_dataloader:
             train_times = train(img, target, train_times)
 
-        # test
-        if train_times % test_cycle == 0:
-            test_times = test(test_times)
+            # test
+            if train_times % test_cycle == 0:
+                test_times = test(test_times)
 
-        # save state
-        if train_times // save_cycle > test_times:
-            saveModel()
-    print("----第{}轮学习结束----".format(i))
-if train_times % save_cycle != 0:
-    saveModel()
+            # save state
+            if train_times % save_cycle == 0:
+                saveModel()
+        print("----第{}轮学习结束----".format(i))
+    if train_times % save_cycle != 0:
+        saveModel()
+else:
+    for i in range(epoch):
+        print("----第{}轮学习开始----".format(i))
+        for img, target in train_dataloader:
+            train_times, pic_no = patchTrain(img, target, train_times, pic_no)
+            if pic_no % test_cycle == 0:
+                test_times = test(test_times)
+            if pic_no % save_cycle == 0:
+                saveModel()
+        print("----第{}轮学习结束----".format(i))
+    if pic_no % save_cycle != 0:
+        saveModel()
+
 writer.close()
