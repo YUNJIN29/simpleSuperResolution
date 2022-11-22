@@ -81,6 +81,10 @@ def clac(img, target):
     writer.add_images("out", output, train_times)
     return loss_fn(output, target), output
 
+def saveModel():
+    filename = "checkpoint-{}X-{}".format(scale_factor, train_times)
+    torch.save(model.state_dict(),
+               os.path.join(save_dir, filename))
 
 for i in range(epoch):
     print("----第{}轮学习开始----".format(i))
@@ -111,9 +115,8 @@ for i in range(epoch):
 
         # save state
         if train_times % save_cycle == 0:
-            filename = "checkpoint-{}X-{}".format(scale_factor, train_times)
-            torch.save(model.state_dict(),
-                       os.path.join(save_dir, filename))
+            saveModel()
     print("----第{}轮学习结束----".format(i))
-
+if train_times % save_cycle != 0:
+    saveModel()
 writer.close()
