@@ -87,12 +87,12 @@ for i in range(epoch):
     model.train()
     for img, target in train_dataloader:
         loss, final = clac(img, target)
-        print('完成一次训练，loss: {}'.format(loss.item()))
+        print('完成第{}次训练，loss: {}'.format(train_times, loss.item()))
         # optimize
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        writer.add_scalar("train_loss", loss, train_times)
+        writer.add_scalar("train_loss", loss.item(), train_times)
         train_times = train_times + 1
 
         # test
