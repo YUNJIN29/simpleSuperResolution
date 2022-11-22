@@ -43,7 +43,7 @@ test_dataloader = DataLoader(test_dataset, batch_size=1, shuffle=True)
 
 # load model
 model = SRCNN()
-model.to(device)
+model = model.to(device)
 
 # load model state
 if checkpoint != '':
@@ -54,7 +54,7 @@ model.float()
 
 # loss Function
 loss_fn = nn.MSELoss()
-loss_fn.to(device)
+loss_fn = loss_fn.to(device)
 
 #  optimizer
 optimizer = optim.Adam([
@@ -73,14 +73,10 @@ writer = SummaryWriter(logdir)
 def clac(img, target):
     img = img.to(device)
     target = target.to(device)
-    print(img.size())
-    print(target.size())
     # img_patchs = img_splitter.split_img_tensor(img)
     # out = [model(i.to(device)) for i in img_patchs]
     # output = img_splitter.merge_img_tensor(out)
     output = model(img)
-    print(output.size())
-    writer.add_images("out", output, train_times)
     return loss_fn(output, target), output
 
 
