@@ -1,3 +1,4 @@
+import torch
 from torch import optim
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
@@ -72,9 +73,6 @@ writer = SummaryWriter(logdir)
 def clac(img, target):
     img = img.to(device)
     target = target.to(device)
-    # img_patchs = img_splitter.split_img_tensor(img)
-    # out = [model(i.to(device)) for i in img_patchs]
-    # output = img_splitter.merge_img_tensor(out)
     output = model(img)
     return loss_fn(output, target), output
 
@@ -103,20 +101,21 @@ for i in range(epoch):
 
         # test
         if train_times % test_cycle == 0:
-            total_loss = 0
-            flag = True
-            for image, expect in test_dataloader:
-                loss, final = clac(image, expect)
-                total_loss = total_loss + loss
-                if flag:
-                    flag = False
-                    image = image.to(device)
-                    expect = expect.to(device)
-                    con = torch.cat([image, final])
-                    writer.add_images("test-img", con, test_times)
-            writer.add_scalar("test_loss", total_loss / test_dataset_len, test_times)
-            print("\n完成第{}次测试，loss: {}\n".format(test_times, total_loss / test_dataset_len))
-            test_times = test_times + 1
+            with torch.no_grad():
+                total_loss = 0
+                flag = True
+                for image, expect in test_dataloader:
+                    loss, final = clac(image, expect)
+                    total_loss = total_loss + loss
+                    if flag:
+                        flag = False
+                        image = image.to(device)
+                        expect = expect.to(device)
+                        con = torch.cat([image, final])
+                        writer.add_images("test-img", con, test_times)
+                writer.add_scalar("test_loss", total_loss / test_dataset_len, test_times)
+                print("\n完成第{}次测试，loss: {}\n".format(test_times, total_loss / test_dataset_len))
+                test_times = test_times + 1
 
         # save state
         if train_times % save_cycle == 0:
