@@ -1,4 +1,3 @@
-import torch
 from torch import optim
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
@@ -86,6 +85,7 @@ def saveModel():
     filename = "checkpoint-{}X-{}".format(scale_factor, train_times)
     torch.save(model.state_dict(),
                os.path.join(save_dir, filename))
+    print("已保存{}".format(filename))
 
 
 for i in range(epoch):
@@ -115,6 +115,7 @@ for i in range(epoch):
                     con = torch.cat([image, final])
                     writer.add_images("test-img", con, test_times)
             writer.add_scalar("test_loss", total_loss / test_dataset_len, test_times)
+            print("\n完成第{}次测试，loss: {}\n".format(test_times, total_loss / test_dataset_len))
             test_times = test_times + 1
 
         # save state
