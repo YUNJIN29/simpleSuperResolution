@@ -1,3 +1,4 @@
+import torch
 from torch import optim
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
@@ -46,11 +47,6 @@ test_dataloader = DataLoader(test_dataset, batch_size=1, shuffle=True)
 model = SRCNN()
 model = model.to(device)
 
-# load model state
-if checkpoint != '':
-    model.load_state_dict(torch.load(checkpoint))
-    print('载入checkpoint: {}'.format(checkpoint))
-
 # trans datatype
 model.float()
 
@@ -65,6 +61,15 @@ optimizer = optim.Adam([
     {'params': model.conv3.parameters(), 'lr': learning_rate * 0.1}
 ], lr=learning_rate)
 # optimizer = optim.SGD(model.parameters(), lr=learning_rate)
+
+# load model state
+if checkpoint != '':
+    state_data = torch.load(checkpoint)
+    model.load_state_dict(state_data['model'])
+    optimizer.load_state_dict(state_data['optim'])
+    train_times = state_data['epoch']
+    print('载入checkpoint: {}'.format(checkpoint))
+    model.eval()
 
 img_splitter = ImageSplitter(seg_size, scale_factor, border_pad_size)
 
@@ -130,8 +135,13 @@ def test(test_times):
 def saveModel(save_no):
     if not os.path.isdir(save_dir):
         os.mkdir(save_dir)
-    filename = "checkpoint-{}X-{}".format(scale_factor, save_no)
-    torch.save(model.state_dict(),
+    filename = "checkpoint-{}X-{}.pth".format(scale_factor, save_no)
+    save_state_data = {
+        'model': model.state_dict(),
+        'optim': optimizer.state_dict(),
+        'epoch': train_times
+    }
+    torch.save(save_state_data,
                os.path.join(save_dir, filename))
     print("已保存{}".format(filename))
 
