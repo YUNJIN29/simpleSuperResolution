@@ -69,6 +69,7 @@ if checkpoint != '':
     optimizer.load_state_dict(state_data['optim'])
     train_times = state_data['train_epoch']
     test_times = state_data['eval_epoch']
+    pic_no = state_data['pic_no']
     print('载入checkpoint: {}'.format(checkpoint))
     model.eval()
 
@@ -141,7 +142,8 @@ def saveModel(save_no):
         'model': model.state_dict(),
         'optim': optimizer.state_dict(),
         'train_epoch': train_times,
-        'eval_epoch': test_times
+        'eval_epoch': test_times,
+        'pic_no': pic_no
     }
     torch.save(save_state_data,
                os.path.join(save_dir, filename))
