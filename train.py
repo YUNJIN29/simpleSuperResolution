@@ -100,7 +100,7 @@ def patchTrain(img, target, train_times, pic_no):
         loss.backward()
         optimizer.step()
         train_times = train_times + 1
-        writer.add_scalar("train_loss", loss.item(), train_times)
+        # writer.add_scalar("train_loss", loss.item(), train_times)
         print('完成第{}次训练，loss: {}'.format(train_times, loss.item()))
     return train_times, pic_no + 1
 
@@ -124,10 +124,10 @@ def test(test_times):
     return test_times + 1
 
 
-def saveModel():
+def saveModel(save_no):
     if not os.path.isdir(save_dir):
         os.mkdir(save_dir)
-    filename = "checkpoint-{}X-{}".format(scale_factor, train_times)
+    filename = "checkpoint-{}X-{}".format(scale_factor, save_no)
     torch.save(model.state_dict(),
                os.path.join(save_dir, filename))
     print("已保存{}".format(filename))
@@ -145,10 +145,10 @@ if opts.patchs == 0:
 
             # save state
             if train_times % save_cycle == 0:
-                saveModel()
+                saveModel(train_times)
         print("----第{}轮学习结束----".format(i))
     if train_times % save_cycle != 0:
-        saveModel()
+        saveModel(train_times)
 else:
     for i in range(epoch):
         print("----第{}轮学习开始----".format(i))
@@ -157,9 +157,9 @@ else:
             if pic_no % test_cycle == 0:
                 test_times = test(test_times)
             if pic_no % save_cycle == 0:
-                saveModel()
+                saveModel(pic_no)
         print("----第{}轮学习结束----".format(i))
     if pic_no % save_cycle != 0:
-        saveModel()
+        saveModel(pic_no)
 
 writer.close()
