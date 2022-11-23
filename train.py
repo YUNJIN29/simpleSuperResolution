@@ -163,6 +163,7 @@ if opts.patchs == 0:
                 saveModel(train_times)
         print("----第{}轮学习结束----".format(i))
     if train_times % save_cycle != 0:
+        test_times = test(test_times)
         saveModel(train_times)
 else:
     for i in range(epoch):
@@ -175,6 +176,7 @@ else:
                 saveModel(pic_no)
         print("----第{}轮学习结束----".format(i))
     if pic_no % save_cycle != 0:
+        test_times = test(test_times)
         saveModel(pic_no)
 
 writer.close()
