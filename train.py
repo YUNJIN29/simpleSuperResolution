@@ -49,6 +49,7 @@ model = model.to(device)
 # load model state
 if checkpoint != '':
     model.load_state_dict(torch.load(checkpoint))
+    print('载入checkpoint: {}'.format(checkpoint))
 
 # trans datatype
 model.float()
