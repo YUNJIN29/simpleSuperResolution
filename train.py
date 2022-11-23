@@ -111,7 +111,7 @@ def patchTrain(img, target, train_times, pic_no):
         train_times = train_times + 1
         total_loss = total_loss + loss
         print('完成第{}次训练，loss: {}'.format(train_times, loss.item()))
-    writer.add_scalar("train_avg_loss", total_loss.item(), train_times)
+    writer.add_scalar("train_avg_loss", total_loss.item(), pic_no)
     return train_times, pic_no + 1
 
 
