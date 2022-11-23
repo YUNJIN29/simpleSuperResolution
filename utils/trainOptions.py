@@ -26,8 +26,6 @@ class TrainOptions:
         self.parser.add_argument('--seq-size', default=64, type=int)
         self.parser.add_argument('--scale', default=2, type=int)
         self.parser.add_argument('--border', default=3, type=int)
-        self.parser.add_argument('--train-times', default=0, type=int)
-        self.parser.add_argument('--test-times', default=0, type=int)
         self.parser.add_argument('--test-cycle', default=100, type=int)
         self.parser.add_argument('--save-cycle', default=500, type=int)
         self.parser.add_argument('--save-dir', default='checkpoint')

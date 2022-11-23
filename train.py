@@ -23,9 +23,9 @@ scale_factor = opts.scale
 border_pad_size = opts.border
 logdir = opts.log_dir
 # train times
-train_times = opts.train_times
+train_times = 0
 # test times
-test_times = opts.test_times
+test_times = 0
 test_cycle = opts.test_cycle
 save_cycle = opts.save_cycle
 pic_no = 0
