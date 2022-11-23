@@ -95,14 +95,16 @@ def patchTrain(img, target, train_times, pic_no):
     img_parts = img_splitter.split_img_tensor(img)
     target_part = img_splitter.split_img_tensor(target)
     print('第{}张数据，共{}个切片'.format(pic_no, len(img_parts)))
+    total_loss = 0
     for i in range(len(img_parts)):
         loss, out = clac(img_parts[i], target_part[i])
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
         train_times = train_times + 1
-        # writer.add_scalar("train_loss", loss.item(), train_times)
+        total_loss = total_loss + loss
         print('完成第{}次训练，loss: {}'.format(train_times, loss.item()))
+    writer.add_scalar("train_avg_loss", total_loss.item(), train_times)
     return train_times, pic_no + 1
 
 
