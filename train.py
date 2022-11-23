@@ -128,8 +128,7 @@ def test(test_times):
                 image = image.to(device)
                 con = torch.cat([image, final])
                 writer.add_images("test-img", con, test_times)
-    writer.add_scalar("test_loss", total_loss, test_times)
-    writer.add_scalar("total_test_loss", total_loss / test_dataset_len, test_times)
+    writer.add_scalar("test_loss", total_loss / test_dataset_len, test_times)
     print("\n完成第{}次测试，total loss: {}\n".format(test_times, total_loss))
     return test_times + 1
 
