@@ -145,6 +145,8 @@ def test(test_times):
 
 
 def patchsTest(test_times):
+    if opts.disable_patchs_eval > 0:
+        return test(test_times)
     model.eval()
     with torch.no_grad():
         total_loss = 0
