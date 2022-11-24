@@ -29,7 +29,7 @@ test_times = 0
 test_cycle = opts.test_cycle
 save_cycle = opts.save_cycle
 pic_no = 0
-test_offset = train_times - test_times * test_cycle
+best_loss = 100
 
 # dataset
 train_dataset = ImgDataset(train_dataset_dir, HR_dir=opts.target_folder, LR_dir=opts.input_folder,
@@ -129,8 +129,13 @@ def test(test_times):
                 image = image.to(device)
                 con = torch.cat([image, final])
                 writer.add_images("test-img", con, test_times)
-    writer.add_scalar("test_loss", total_loss / test_dataset_len, test_times)
-    print("\n完成第{}次测试，total loss: {}\n".format(test_times, total_loss / test_dataset_len))
+    avg_loss = total_loss / test_dataset_len
+    writer.add_scalar("test_loss", avg_loss, test_times)
+    print("\n完成第{}次测试，total loss: {}\n".format(test_times, avg_loss))
+    global best_loss
+    if avg_loss < best_loss:
+        best_loss = avg_loss
+        saveModel('best')
     return test_times + 1
 
 
