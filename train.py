@@ -73,8 +73,10 @@ if checkpoint != '':
     print('载入checkpoint: {}'.format(checkpoint))
     model.eval()
 
+
 def imgSplitter():
     return ImageSplitter(seg_size, scale_factor, border_pad_size)
+
 
 # tensorBoard
 writer = SummaryWriter(logdir)
@@ -116,6 +118,15 @@ def patchTrain(img, target, train_times, pic_no):
     return train_times, pic_no + 1
 
 
+def recodeTest(avg_loss, add_img=None):
+    writer.add_scalar("test_loss", avg_loss, test_times)
+    print("\n完成第{}次测试，total loss: {}\n".format(test_times, avg_loss))
+    global best_loss
+    if avg_loss < best_loss:
+        best_loss = avg_loss
+        saveModel('best-{}'.format(train_times if opts.patchs == 0 else pic_no))
+
+
 def test(test_times):
     model.eval()
     with torch.no_grad():
@@ -129,13 +140,22 @@ def test(test_times):
                 image = image.to(device)
                 con = torch.cat([image, final])
                 writer.add_images("test-img", con, test_times)
-    avg_loss = total_loss / test_dataset_len
-    writer.add_scalar("test_loss", avg_loss, test_times)
-    print("\n完成第{}次测试，total loss: {}\n".format(test_times, avg_loss))
-    global best_loss
-    if avg_loss < best_loss:
-        best_loss = avg_loss
-        saveModel('best')
+    recodeTest(total_loss / test_dataset_len)
+    return test_times + 1
+
+
+def patchsTest(test_times):
+    model.eval()
+    with torch.no_grad():
+        total_loss = 0
+        for image, expect in test_dataloader:
+            img_patchs = imgSplitter().split_img_tensor(image)
+            tar_patchs = imgSplitter().split_img_tensor(target)
+            img_len = len(img_patchs)
+            for i in range(img_len):
+                loss, out = clac(img_patchs[i], tar_patchs[i])
+                total_loss = total_loss + loss
+    recodeTest(total_loss / test_dataset_len)
     return test_times + 1
 
 
@@ -155,6 +175,7 @@ def saveModel(save_no):
     print("已保存{}".format(filename))
 
 
+# 全图训练
 if opts.patchs == 0:
     for i in range(epoch):
         print("----第{}轮学习开始----".format(i))
@@ -172,18 +193,19 @@ if opts.patchs == 0:
     if train_times % save_cycle != 0:
         test_times = test(test_times)
         saveModel(train_times)
+# 切片训练
 else:
     for i in range(epoch):
         print("----第{}轮学习开始----".format(i))
         for img, target in train_dataloader:
             train_times, pic_no = patchTrain(img, target, train_times, pic_no)
             if pic_no % test_cycle == 0:
-                test_times = test(test_times)
+                test_times = patchsTest(test_times)
             if pic_no % save_cycle == 0:
                 saveModel(pic_no)
         print("----第{}轮学习结束----".format(i))
     if pic_no % save_cycle != 0:
-        test_times = test(test_times)
+        test_times = patchsTest(test_times)
         saveModel(pic_no)
 
 writer.close()
