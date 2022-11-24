@@ -40,14 +40,14 @@ class ImageSplitter:
         return patchs
 
     def merge_img_tensor(self, img_tensor_list):
-        out = torch.zeros((1, 3, self.height * self.scale_factor, self.width * self.scale_factor))
+        out = torch.zeros((1, 3, self.height, self.width))
         img_tensors = copy.copy(img_tensor_list)
-        rem = self.pad_size * 2
+        rem = self.pad_size
 
-        pad_size = self.scale_factor * self.pad_size
-        seg_size = self.scale_factor * self.seg_size
-        height = self.scale_factor * self.height
-        width = self.scale_factor * self.width
+        pad_size = self.pad_size
+        seg_size = self.seg_size
+        height = self.height
+        width = self.width
         for i in range(pad_size, height, seg_size):
             for j in range(pad_size, width, seg_size):
                 part = img_tensors.pop(0)
