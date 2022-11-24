@@ -73,7 +73,8 @@ if checkpoint != '':
     print('载入checkpoint: {}'.format(checkpoint))
     model.eval()
 
-img_splitter = ImageSplitter(seg_size, scale_factor, border_pad_size)
+def imgSplitter():
+    return ImageSplitter(seg_size, scale_factor, border_pad_size)
 
 # tensorBoard
 writer = SummaryWriter(logdir)
@@ -99,8 +100,8 @@ def train(img, target, train_times):
 
 def patchTrain(img, target, train_times, pic_no):
     model.train()
-    img_parts = img_splitter.split_img_tensor(img)
-    target_part = img_splitter.split_img_tensor(target)
+    img_parts = imgSplitter().split_img_tensor(img)
+    target_part = imgSplitter().split_img_tensor(target)
     print('第{}张数据，共{}个切片'.format(pic_no, len(img_parts)))
     total_loss = 0
     for i in range(len(img_parts)):
