@@ -7,6 +7,7 @@ from Module import *
 from Dataset import *
 from utils.trainOptions import *
 from utils.imageUtil import ImageSplitter
+from main import calcImg
 
 # load options
 opts = TrainOptions().getOpts()
@@ -148,9 +149,12 @@ def patchsTest(test_times):
     if opts.disable_patchs_eval > 0:
         return test(test_times)
     model.eval()
+    out = None
     with torch.no_grad():
         total_loss = 0
         for image, expect in test_dataloader:
+            if out is not None:
+                out = image
             pic_loss = 0
             img_patchs = imgSplitter().split_img_tensor(image)
             tar_patchs = imgSplitter().split_img_tensor(expect)
@@ -159,6 +163,8 @@ def patchsTest(test_times):
                 loss, _ = clac(img_patchs[i], tar_patchs[i])
                 pic_loss = pic_loss + loss
             total_loss = total_loss + (pic_loss / img_len)
+    con = torch.cat([out, calcImg(model, out)])
+    writer.add_images("test-img", con, test_times)
     recodeTest(total_loss / test_dataset_len)
     return test_times + 1
 
