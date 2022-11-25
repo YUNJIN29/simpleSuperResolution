@@ -13,8 +13,10 @@ def getOpts():
     parser = argparse.ArgumentParser()
     parser.add_argument("input", default='')
     parser.add_argument('output', default='.')
+    parser.add_argument('-s', '--scale', default=2, type=int)
     parser.add_argument('-n', '--name', default='output.png')
     parser.add_argument('--checkpoint', required=True)
+    parser.add_argument('--border-size', default=6, type=int)
     return parser.parse_args()
 
 
@@ -39,8 +41,8 @@ if __name__ == '__main__':
     if not os.path.isdir(opts.output):
         raise ValueError('存储目录不存在')
     img = Image.open(opts.input)
-    img = img.resize((img.size[0] * 2, img.size[1] * 2), Image.Resampling.BICUBIC)
-    img_splitter = ImageSplitter(border_pad_size=6)
+    img = img.resize((img.size[0] * opts.scale, img.size[1] * opts.scale), Image.Resampling.BICUBIC)
+    img_splitter = ImageSplitter(border_pad_size=opts.border_size)
     img_patchs = img_splitter.split_img_tensor(img)
     with torch.no_grad():
         out = [model(i.to(device)) for i in img_patchs]
