@@ -124,7 +124,7 @@ def recodeTest(avg_loss, add_img=None):
     global best_loss
     if avg_loss < best_loss:
         best_loss = avg_loss
-        saveModel('best-{}'.format(train_times if opts.patchs == 0 else pic_no))
+        saveModel('best'.format(train_times if opts.patchs == 0 else pic_no))
 
 
 def test(test_times):
