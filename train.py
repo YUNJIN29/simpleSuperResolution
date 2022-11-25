@@ -6,7 +6,6 @@ from Module import *
 from Dataset import *
 from utils.trainOptions import *
 from utils.imageUtil import ImageSplitter
-from main import calcImg
 
 # load options
 opts = TrainOptions().getOpts()
@@ -142,6 +141,14 @@ def test(test_times):
                 writer.add_images("test-img", con, test_times)
     recodeTest(total_loss / test_dataset_len)
     return test_times + 1
+
+
+def calcImg(model, pic, border_size=6):
+    img_splitter = ImageSplitter(border_pad_size=border_size)
+    img_patchs = img_splitter.split_img_tensor(pic)
+    with torch.no_grad():
+        out = [model(i.to(device)) for i in img_patchs]
+    return img_splitter.merge_img_tensor(out)
 
 
 def patchsTest(test_times):
