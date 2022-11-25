@@ -153,7 +153,7 @@ def patchsTest(test_times):
         for image, expect in test_dataloader:
             pic_loss = 0
             img_patchs = imgSplitter().split_img_tensor(image)
-            tar_patchs = imgSplitter().split_img_tensor(target)
+            tar_patchs = imgSplitter().split_img_tensor(expect)
             img_len = len(img_patchs)
             for i in range(img_len):
                 loss, _ = clac(img_patchs[i], tar_patchs[i])
