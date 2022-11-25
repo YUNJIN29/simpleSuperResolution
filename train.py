@@ -156,8 +156,9 @@ def patchsTest(test_times):
             tar_patchs = imgSplitter().split_img_tensor(target)
             img_len = len(img_patchs)
             for i in range(img_len):
-                loss, out = clac(img_patchs[i], tar_patchs[i])
-                total_loss = total_loss + (loss / img_len)
+                loss, _ = clac(img_patchs[i], tar_patchs[i])
+                pic_loss = pic_loss + loss
+            total_loss = total_loss + (pic_loss / img_len)
     recodeTest(total_loss / test_dataset_len)
     return test_times + 1
 
