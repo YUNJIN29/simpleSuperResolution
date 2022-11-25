@@ -34,7 +34,7 @@ def loadModel(checkopint):
 
 def calcImg(model, pic):
     img_splitter = ImageSplitter(border_pad_size=opts.border_size)
-    img_patchs = img_splitter.split_img_tensor(img)
+    img_patchs = img_splitter.split_img_tensor(pic)
     with torch.no_grad():
         out = [model(i.to(device)) for i in img_patchs]
     return img_splitter.merge_img_tensor(out)
