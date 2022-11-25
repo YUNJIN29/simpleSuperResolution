@@ -159,7 +159,7 @@ def patchsTest(test_times):
     with torch.no_grad():
         total_loss = 0
         for image, expect in test_dataloader:
-            if out is not None:
+            if out is None:
                 out = image
             pic_loss = 0
             img_patchs = imgSplitter().split_img_tensor(image)
