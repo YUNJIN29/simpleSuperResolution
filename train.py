@@ -32,9 +32,9 @@ pic_no = 0
 best_loss = 100
 
 # dataset
-train_dataset = ImgDataset(train_dataset_dir, HR_dir=opts.target_folder, LR_dir=opts.input_folder,
+train_dataset = ImgDataset(train_dataset_dir, scale=scale_factor, HR_dir=opts.target_folder, LR_dir=opts.input_folder,
                            prefix=opts.train_prefix, subfix=opts.train_subfix)
-test_dataset = ImgDataset(test_dataset_dir, HR_dir=opts.target_folder, LR_dir=opts.input_folder,
+test_dataset = ImgDataset(test_dataset_dir, scale=scale_factor, HR_dir=opts.target_folder, LR_dir=opts.input_folder,
                           prefix=opts.test_prefix, subfix=opts.test_subfix)
 train_dataset_len = len(train_dataset)
 test_dataset_len = len(test_dataset)

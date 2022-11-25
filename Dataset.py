@@ -9,9 +9,10 @@ class ImgDataset(VisionDataset):
     _filetype = ('jpg', 'jpeg', 'png', 'ppm', 'bmp', 'pgm', 'tif', 'tiff', 'webp')
 
     def __init__(self, root: str, transforms: Optional[Callable] = None, transform: Optional[Callable] = None,
-                 target_transform: Optional[Callable] = None, LR_dir: str = 'LR', HR_dir: str = 'HR',
+                 target_transform: Optional[Callable] = None, scale=2, LR_dir: str = 'LR', HR_dir: str = 'HR',
                  prefix: str = '', subfix: str = '') -> None:
         super().__init__(root, transforms, transform, target_transform)
+        self.scale = scale
         self.root = root
         self.lr_dir = os.path.join(self.root, LR_dir)
         self.hr_dir = os.path.join(self.root, HR_dir)
@@ -30,7 +31,7 @@ class ImgDataset(VisionDataset):
         imgFile = self.imgs[index]
         img = Image.open(imgFile[0]).convert('RGB')
         target = Image.open(imgFile[1]).convert('RGB')
-        img = img.resize((img.size[0] * 2, img.size[1] * 2), Image.Resampling.BICUBIC)
+        img = img.resize((img.size[0] * self.scale, img.size[1] * self.scale), Image.Resampling.BICUBIC)
         if self.transform is not None:
             img, target = self.transforms(img, target)
         else:
