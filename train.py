@@ -151,12 +151,13 @@ def patchsTest(test_times):
     with torch.no_grad():
         total_loss = 0
         for image, expect in test_dataloader:
+            pic_loss = 0
             img_patchs = imgSplitter().split_img_tensor(image)
             tar_patchs = imgSplitter().split_img_tensor(target)
             img_len = len(img_patchs)
             for i in range(img_len):
                 loss, out = clac(img_patchs[i], tar_patchs[i])
-                total_loss = total_loss + loss
+                total_loss = total_loss + (loss / img_len)
     recodeTest(total_loss / test_dataset_len)
     return test_times + 1
 
