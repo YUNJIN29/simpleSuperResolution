@@ -32,8 +32,8 @@ def loadModel(checkopint):
     return model
 
 
-def calcImg(model, pic):
-    img_splitter = ImageSplitter(border_pad_size=opts.border_size)
+def calcImg(model, pic, border_pad_size=6):
+    img_splitter = ImageSplitter(border_pad_size=border_pad_size)
     img_patchs = img_splitter.split_img_tensor(pic)
     with torch.no_grad():
         out = [model(i.to(device)) for i in img_patchs]
@@ -50,5 +50,5 @@ if __name__ == '__main__':
         raise ValueError('存储目录不存在')
     img = Image.open(opts.input)
     img = img.resize((img.size[0] * opts.scale, img.size[1] * opts.scale), Image.Resampling.BICUBIC)
-    final = calcImg(model, img)
+    final = calcImg(model, img, opts.border_size)
     save_image(final, os.path.join(opts.output, opts.name))
