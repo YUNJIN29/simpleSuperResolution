@@ -37,6 +37,7 @@ class TrainOptions:
         self.parser.add_argument('--test-subfix', default='')
         self.parser.add_argument('--patchs', default=0, action='count')
         self.parser.add_argument('--disable-patchs-eval', default=0, action='count')
+        self.parser.add_argument('--reset-counter', default=0, action='count')
 
     def getOpts(self):
         parse = self.parser.parse_args()

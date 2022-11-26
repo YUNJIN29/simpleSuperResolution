@@ -66,9 +66,10 @@ if checkpoint != '':
     state_data = torch.load(checkpoint)
     model.load_state_dict(state_data['model'])
     optimizer.load_state_dict(state_data['optim'])
-    train_times = state_data['train_epoch']
-    test_times = state_data['eval_epoch']
-    pic_no = state_data['pic_no']
+    if opts.reset_counter == 0:
+        train_times = state_data['train_epoch']
+        test_times = state_data['eval_epoch']
+        pic_no = state_data['pic_no']
     print('载入checkpoint: {}'.format(checkpoint))
     model.eval()
 
