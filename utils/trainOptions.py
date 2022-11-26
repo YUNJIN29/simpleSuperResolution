@@ -23,7 +23,7 @@ class TrainOptions:
         self.parser.add_argument('--log-dir', default='logs/train_log')
         self.parser.add_argument('--lr', default=1e-4, type=float, help='The learning rate')
         self.parser.add_argument('--epoch', default=5, type=int)
-        self.parser.add_argument('--seq-size', default=64, type=int)
+        self.parser.add_argument('--seq-size', default=48, type=int)
         self.parser.add_argument('--scale', default=2, type=int)
         self.parser.add_argument('--border', default=3, type=int)
         self.parser.add_argument('--test-cycle', default=100, type=int)

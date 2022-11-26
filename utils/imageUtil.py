@@ -7,7 +7,7 @@ from torchvision import transforms
 
 
 class ImageSplitter:
-    def __init__(self, seg_size=64, scale_factor=2, border_pad_size=3):
+    def __init__(self, seg_size=48, scale_factor=2, border_pad_size=3):
         self.seg_size = seg_size
         self.scale_factor = scale_factor
         self.pad_size = border_pad_size
