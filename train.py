@@ -135,7 +135,7 @@ def test(test_times):
         for image, expect in test_dataloader:
             loss, final = clac(image, expect)
             total_loss = total_loss + loss
-            if flag and opts.disable_img_recode == 0:
+            if flag and opts.disable_img_record == 0:
                 flag = False
                 image = image.to(device)
                 con = torch.cat([image, final])
@@ -170,7 +170,7 @@ def patchsTest(test_times):
                 loss, _ = clac(img_patchs[i], tar_patchs[i])
                 pic_loss = pic_loss + loss
             total_loss = total_loss + (pic_loss / img_len)
-    if opts.disable_img_recode == 0:
+    if opts.disable_img_record == 0:
         con = torch.cat([out, calcImg(model, out)])
         writer.add_images("test-img", con, test_times)
     recodeTest(total_loss / test_dataset_len)
