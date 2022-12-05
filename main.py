@@ -12,7 +12,7 @@ from Module import SRCNN
 def getOpts():
     parser = argparse.ArgumentParser()
     parser.add_argument("input", default='', help="输入图片路径")
-    parser.add_argument('output', default='.', help="输出存储目录，默认当期目录")
+    parser.add_argument('output', default='.', help="输出存储目录")
     parser.add_argument('-s', '--scale', default=2, type=int, help="放大倍率，默认2")
     parser.add_argument('-n', '--name', default='output.png', help="输出文件文件名，默认output.png")
     parser.add_argument('--checkpoint', required=True, help="使用的checkpoint")
