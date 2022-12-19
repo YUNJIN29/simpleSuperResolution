@@ -119,13 +119,13 @@ def patchTrain(img, target, train_times, pic_no):
     return train_times, pic_no + 1
 
 
-def recodeTest(avg_loss, add_img=None):
+def recodeTest(avg_loss):
     writer.add_scalar("test_loss", avg_loss, test_times)
     print("\n完成第{}次测试，total loss: {}\n".format(test_times, avg_loss))
     global best_loss
     if avg_loss < best_loss:
         best_loss = avg_loss
-        saveModel('best'.format(train_times if opts.patchs == 0 else pic_no))
+        saveModel('best'.format(train_times if opts.no_patchs > 0 else pic_no))
 
 
 def test(test_times):
@@ -196,7 +196,7 @@ def saveModel(save_no):
 
 
 # 全图训练
-if opts.patchs == 0:
+if opts.no_patchs > 0:
     for i in range(epoch):
         print("----第{}轮学习开始----".format(i))
         for img, target in train_dataloader:

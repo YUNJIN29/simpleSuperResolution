@@ -35,7 +35,7 @@ class TrainOptions:
         self.parser.add_argument('--train-subfix', default='', help="训练集中训练目标的文件名后缀")
         self.parser.add_argument('--test-prefix', default='', help="验证集中验证目标的文件名前缀")
         self.parser.add_argument('--test-subfix', default='', help="验证集中验证目标的文件名后缀")
-        self.parser.add_argument('--patchs', default=0, action='count', help="使用切片训练")
+        self.parser.add_argument('--no-patchs', default=0, action='count', help="不使用切片训练")
         self.parser.add_argument('--disable-patchs-eval', default=0, action='count', help="不使用切片验证，仅在启用切片训练时生效")
         self.parser.add_argument('--reset-counter', default=0, action='count', help="重置训练计数器")
         self.parser.add_argument('--disable-img-record', default=0, action='count', help="日志不记录验证机输出")
