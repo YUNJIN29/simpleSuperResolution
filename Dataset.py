@@ -41,26 +41,3 @@ class ImgDataset(VisionDataset):
 
     def __len__(self) -> int:
         return self.length
-
-# class ImgDataSet(VisionDataset):
-#     def __init__(self, root: str, transforms: Optional[Callable] = None, transform: Optional[Callable] = None,
-#                  target_transform: Optional[Callable] = None, lr_class='LR', hr_class='HR') -> None:
-#         super().__init__(root, transforms, transform, target_transform)
-#         self.imgs = ImageFolder(root)
-#         self.lr = self.imgs.class_to_idx.get(lr_class)
-#         self.hr = self.imgs.class_to_idx.get(hr_class)
-#         if self.lr is None or self.hr is None:
-#             raise RuntimeError('Dataset class not exists')
-#
-#     def __getitem__(self, index: int) -> Tuple[Any, Any]:
-#         img = self.imgs[self.lr][index]
-#         target = self.imgs[self.hr][index]
-#         if self.transforms is not None:
-#             img, target = self.transforms(img, target)
-#         else:
-#             img = to_tensor(img)
-#             target = to_tensor(target)
-#         return img, target
-#
-#     def __len__(self) -> int:
-#         return len(self.imgs[self.lr])
