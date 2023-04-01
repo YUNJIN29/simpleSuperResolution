@@ -1,6 +1,7 @@
 import argparse
 import os
 
+import torch as torch
 import torch
 from torchvision.utils import save_image
 from PIL import Image
@@ -28,7 +29,7 @@ _filetype = ('jpg', 'jpeg', 'png', 'ppm', 'bmp', 'pgm', 'tif', 'tiff', 'webp')
 def loadModel(checkopint):
     model = SRCNN()
     model = model.to(device)
-    model.load_state_dict(torch.load(checkopint).get('model'))
+    model.load_state_dict(torch.load(checkopint, map_location=torch.device("cpu")).get('model'))
     return model
 
 
